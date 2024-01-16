@@ -1,4 +1,5 @@
 #include<bits/stdc++.h>
+#include <time.h>
 using namespace std;
 #define BIT 9
 
@@ -33,11 +34,14 @@ void binaryMultiplication(bitset<BIT> &q, bitset<BIT> &t2, bitset<BIT> &result) 
 }
 
 int main() {
-	bitset<BIT> q("1001010");
-	bitset<BIT> p("1001010");
+	clock_t t = clock(); // start time
+	bitset<BIT> q("10111");
+	bitset<BIT> p("11000");
 	bitset<BIT> result;
    
     binaryMultiplication(q, p,result) ;
-    cout << "Multiplication : " << result;
+    cout << "Multiplication : " << result<< endl;
+    t = clock() - t; // t = end time - start time
+	cout << "Execution Time : " << (((double)t / CLOCKS_PER_SEC) * 1e6) << " micro-sec." << endl;
     return 0;
 }
