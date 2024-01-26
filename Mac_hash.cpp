@@ -30,8 +30,10 @@ int main() {
     // Read the file byte-wise
     char byte;
     while (file.get(byte)) {
+    	
 	        //std::cout << "Read byte: " << static_cast<unsigned int>(static_cast<unsigned char>(byte)) << std::endl;
 	        int num = byte - 0;
+	        if (num == 10) continue; // 10 -- end of line
 	        cout << num << endl;
 	        a = num;
 	        a = gf256.Multiply(a,b); // b * alfa
