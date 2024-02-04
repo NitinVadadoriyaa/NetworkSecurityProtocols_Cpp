@@ -2,8 +2,11 @@
 
 int main() {
 	clock_t t = clock();
+	string fileName;
+	cout << "Enter fileName : ";
+	cin >> fileName;
+	const char* filePath = fileName.c_str();
 	
-	const char* filePath = "assignment-3.pdf";
 	int key_len;
 	cout << "Enter key length : ";
 	cin >> key_len;

@@ -1,10 +1,10 @@
 #include "MyCryptoLib.h"
-int M;
 
-GF256::Element calculate_mac(vector<GF256::Element>&block, GF256::Element key)
+//LAB-ASSIGNMENT-2
+GF256::Element calculate_mac(vector<GF256::Element>&block, GF256::Element key,int M)
 {
 	//gf2256 intialization
-	GF256 gf256(283); //100011011 , you can also give input in HEXA form like : 0x11B
+	GF256 gf256(0x11B); //100011011 , you can also give input in HEXA form like : 283
 	GF256::Element byte = key;
 	//std::cout << byte << std::endl;
 	GF256::Element mac = 0;
@@ -20,8 +20,10 @@ GF256::Element calculate_mac(vector<GF256::Element>&block, GF256::Element key)
     return mac;
 }
 
+//LAB-ASSIGNMENT-3
 void find_mac(const char* filePath, vector<GF256::Element> &key) {
 	int key_len = key.size();
+	int M;
 	cout << "Enter block size (in segment) : ";
 	cin >> M;
 	vector<GF256::Element>row(M,0);
@@ -36,7 +38,7 @@ void find_mac(const char* filePath, vector<GF256::Element> &key) {
         return;
     }
     
-    std::ofstream writeFile("Output.bin", std::ios::binary);
+    std::ofstream writeFile("Output1.bin", std::ios::binary);
     if (!writeFile.is_open()) {
         std::perror("Error opening output file");
         return;
@@ -47,7 +49,7 @@ void find_mac(const char* filePath, vector<GF256::Element> &key) {
 	 		m = 0;
 	 		
 	 		for (int k = 0; k < key_len; k++) {
-				GF256::Element result = calculate_mac(row,key[k]);
+				GF256::Element result = calculate_mac(row,key[k],M);
 				writeFile.write(reinterpret_cast<const char*>(&result), sizeof(GF256::Element));
 				
 				cout << hex << setw(2) << setfill('0') << static_cast<int>(result);
@@ -61,7 +63,7 @@ void find_mac(const char* filePath, vector<GF256::Element> &key) {
     }
     if (m != 0) {
     	for (int k = 0; k < key_len; k++) {
-				GF256::Element result = calculate_mac(row,key[k]);
+				GF256::Element result = calculate_mac(row,key[k],M);
 				writeFile.write(reinterpret_cast<const char*>(&result), sizeof(GF256::Element));
 				
 				cout << hex << setw(2) << setfill('0') << static_cast<int>(result);
@@ -71,4 +73,52 @@ void find_mac(const char* filePath, vector<GF256::Element> &key) {
     cout << endl;
     readFile.close();
     writeFile.close();
+    return;
+}
+
+//LAB-ASSIGNMENT-4
+void calculate_matrix_multiplication(vector<vector<GF256::Element>> &a, vector<vector<GF256::Element>> &c, const char* filePath,int r,const char* fileName) { // fileName -> output file
+	int p,q;
+	p = a.size();
+	q = a[0].size();
+	
+	// Open the file in binary mode
+    std::ifstream readFile(filePath, std::ios::binary);
+    if (!readFile.is_open()) {
+        std::cerr << "Error opening file: " << filePath << std::endl;
+        return;
+    }
+    vector<vector<GF256::Element>>b(q,vector<GF256::Element>(r,0)); // q * r
+    for (int i = 0; i < q; i++) {
+		char ele = 0b00000000;
+		for (int j = 0; j < r; j++) {
+				readFile.get(ele); // read from file...
+				b[i][j] = static_cast<GF256::Element>(ele);
+				
+				//bitset<8>bit(b[i][j]);
+				//cout << bit << " ";
+		}
+		//cout << endl;
+	}
+    GF256 gf256(0x11B); //100011011 , you can also give input in HEXA form like : 283
+    std::ofstream writeFile(fileName, std::ios::binary);
+    if (!writeFile.is_open()) {
+        std::perror("Error opening output file");
+        return;
+    }
+    
+    for (int i = 0; i < p; ++i) {
+        for (int j = 0; j < r; ++j) {
+            for (int k = 0; k < q; ++k) {
+                GF256::Element mul = gf256.Multiply(a[i][k],b[k][j]);
+                c[i][j] = gf256.Add(mul,c[i][j]);
+            }
+            writeFile.write(reinterpret_cast<const char*>(&c[i][j]), sizeof(GF256::Element)); // write on file
+            cout << hex << setw(2) << setfill('0') << static_cast<int>(c[i][j]);
+			if (r - j != 1) cout << "::";
+		}
+		cout << endl;
+    }
+    
+	return;
 }
