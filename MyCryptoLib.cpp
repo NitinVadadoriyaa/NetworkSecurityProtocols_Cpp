@@ -43,11 +43,10 @@ void find_mac(const char* filePath, vector<GF256::Element> &key) {
         std::perror("Error opening output file");
         return;
     }
-
+	int cnt = 0;
 	  while (readFile.get(byte))  {
 	 	if (m == M) { // making dynemic :=> create vector<int>row(M) :=> vector to mat.push_back(row).
 	 		m = 0;
-	 		
 	 		for (int k = 0; k < key_len; k++) {
 				GF256::Element result = calculate_mac(row,key[k],M);
 				writeFile.write(reinterpret_cast<const char*>(&result), sizeof(GF256::Element));
@@ -62,6 +61,9 @@ void find_mac(const char* filePath, vector<GF256::Element> &key) {
 	 	m++;
     }
     if (m != 0) {
+    	for (m; m < M; m++) {
+    		row[m] = 0x0A; // padding..
+    	}
     	for (int k = 0; k < key_len; k++) {
 				GF256::Element result = calculate_mac(row,key[k],M);
 				writeFile.write(reinterpret_cast<const char*>(&result), sizeof(GF256::Element));
@@ -91,13 +93,20 @@ void calculate_matrix_multiplication(vector<vector<GF256::Element>> &a, vector<v
     vector<vector<GF256::Element>>b(q,vector<GF256::Element>(r,0)); // q * r
     for (int i = 0; i < q; i++) {
 		char ele = 0b00000000;
+		bool check = false;
 		for (int j = 0; j < r; j++) {
-				readFile.get(ele); // read from file...
-				b[i][j] = static_cast<GF256::Element>(ele);
-				
+		
+				if (readFile.get(ele)) {  // read from file...
+					b[i][j] = static_cast<GF256::Element>(ele);
+					
+				} else {
+					check = true;
+					break;
+				}
 				//bitset<8>bit(b[i][j]);
 				//cout << bit << " ";
 		}
+		if (check) break;
 		//cout << endl;
 	}
     GF256 gf256(0x11B); //100011011 , you can also give input in HEXA form like : 283
