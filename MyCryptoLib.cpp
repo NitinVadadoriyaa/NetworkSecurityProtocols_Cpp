@@ -7,7 +7,7 @@ GF256::Element calculate_mac(vector<GF256::Element>&block, GF256::Element key,in
 	GF256 gf256(0x11B); //100011011 , you can also give input in HEXA form like : 283
 	GF256::Element byte = key;
 	//std::cout << byte << std::endl;
-	GF256::Element mac = 0;
+	GF256::Element mac = 0x00;
 	
     	for (int i = 0; i < M; i++) {
 	        //std::cout << "Read byte: " << static_cast<unsigned int>(static_cast<unsigned char>(byte)) << std::endl;
@@ -26,7 +26,7 @@ void find_mac(const char* filePath, vector<GF256::Element> &key) {
 	int M;
 	cout << "Enter block size (in segment) : ";
 	cin >> M;
-	vector<GF256::Element>row(M,0);
+	vector<GF256::Element>row(M,0x00);
 	char byte = 0b00000000;
 	int m = 0;
 
@@ -55,14 +55,14 @@ void find_mac(const char* filePath, vector<GF256::Element> &key) {
 				if (key_len - k != 1) cout << "::";
 			}
 			cout <<  endl;
-			row.resize(M,0);
+			row.resize(M,0x00);
 	 	}
 	 	row[m] = static_cast<GF256::Element>(byte);
 	 	m++;
     }
     if (m != 0) {
     	for (m; m < M; m++) {
-    		row[m] = 0x0A; // padding..
+    		row[m] = 0x00; // padding..
     	}
     	for (int k = 0; k < key_len; k++) {
 				GF256::Element result = calculate_mac(row,key[k],M);
@@ -90,7 +90,7 @@ void calculate_matrix_multiplication(vector<vector<GF256::Element>> &a, vector<v
         std::cerr << "Error opening file: " << filePath << std::endl;
         return;
     }
-    vector<vector<GF256::Element>>b(q,vector<GF256::Element>(r,0x0A)); // q * r
+    vector<vector<GF256::Element>>b(q,vector<GF256::Element>(r,0x00)); // q * r
     for (int i = 0; i < q; i++) {
 		char ele = 0b00000000;
 		bool check = false;
