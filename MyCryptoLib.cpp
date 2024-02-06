@@ -90,7 +90,7 @@ void calculate_matrix_multiplication(vector<vector<GF256::Element>> &a, vector<v
         std::cerr << "Error opening file: " << filePath << std::endl;
         return;
     }
-    vector<vector<GF256::Element>>b(q,vector<GF256::Element>(r,0)); // q * r
+    vector<vector<GF256::Element>>b(q,vector<GF256::Element>(r,0x0A)); // q * r
     for (int i = 0; i < q; i++) {
 		char ele = 0b00000000;
 		bool check = false;
