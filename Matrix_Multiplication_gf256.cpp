@@ -2,6 +2,7 @@
 
 int main ()
 {
+	clock_t t = clock();
 	//***********************I ASUME THAT PROVIDED FILE CONTAIN N * M FULL CHARACTOR -- NO PADDING****************************
 	//step - 1
 	string fileName;
@@ -25,7 +26,7 @@ int main ()
 	cin >> p >> q >> r;
 	vector<vector<GF256::Element>>a(p,vector<GF256::Element>(q,0)); // p * q
 	for (int i = 0; i < p; i++) {
-		char ele; // char --> int for read integer.....
+		int ele; // char --> int for read integer.....
 		for (int j = 0; j < q; j++) {
 				cin >> ele;
 				a[i][j] = static_cast<GF256::Element>(ele);
@@ -47,7 +48,7 @@ int main ()
 	cin >> p >> q >> r;
 	a = vector<vector<GF256::Element>>(p,vector<GF256::Element>(q,0));
 	for (int i = 0; i < p; i++) {
-		char ele; // char --> int for read integer.....
+		int ele; // char --> int for read integer.....
 		for (int j = 0; j < q; j++) {
 				cin >> ele;
 				a[i][j] = static_cast<GF256::Element>(ele);
@@ -63,5 +64,7 @@ int main ()
 	//step - 4
 	find_mac("Output2.bin", key);
 	
+	t = clock() - t; // t = end time - start time
+    cout << "Execution Time : " << (((double)t / CLOCKS_PER_SEC)) << " sec." << endl;
 	return 0;
 }
